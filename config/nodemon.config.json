@@ -1,0 +1,7 @@
+{
+  "watch": [
+    "src/"
+  ],
+  "ext": "js",
+  "exec": "rollup --sourcemap --config build/rollup.dev.config.js"
+}

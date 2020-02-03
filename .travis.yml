@@ -1,0 +1,117 @@
+# 操作系统
+os:
+  - "linux"
+  - "windows"
+  - "osx"
+
+# 编程语言
+language: node_js
+
+# 语言版本
+node_js:
+  - "10"
+  - "8"
+  - "6"
+  - "4"
+  - "0.12"
+  - "0.10"
+
+# 设置脚本
+before_install:
+  - echo "now is in before_install Phase"
+  - echo $SHELLJS_VERSION
+install:
+  - echo "now is in install Phase"
+  - npm install
+  - ./build/install-shelljs.sh
+before_script:
+  - echo "now is in before_script Phase"
+script:
+  - echo "now is in script Phase"
+  - ./node_modules/.bin/eslint --version
+  - npm run lint --silent
+  - npm run test --silent
+after_success:
+  - echo "now is in after_success Phase"
+after_failure:
+  - echo "now is in after_failure Phase"
+before_deploy:
+  - echo "now is in before_deploy Phase"
+deploy:
+  - provider: script
+    skip_cleanup: true
+    script: echo "now is in deploy Phase"
+    on:
+      branch: master
+after_deploy:
+  - echo "now is in after_deploy Phase"
+after_script:
+  - echo "now is in after_script Phase"
+
+# 环境变量
+env:
+  matrix:
+  - SHELLJS_VERSION=0.8.x
+  - SHELLJS_VERSION=0.7.x
+  - SHELLJS_VERSION=0.6.x
+  - SHELLJS_VERSION=0.5.x
+  - SHELLJS_VERSION=0.4.x
+  - SHELLJS_VERSION=0.3.x
+  - SHELLJS_VERSION=0.2.x
+
+# 缓存依赖
+cache: npm
+
+# 使用插件
+addons:
+  ssh_known_hosts:
+  - github.com
+
+matrix:
+  fast_finish: true
+  allow_failures:
+  # for linux/win/mac nodejs<=6 SHELLJS<=0.7.x
+  # SyntaxError: Unexpected token
+  - node_js: '6'
+    env: SHELLJS_VERSION=0.8.x
+  - node_js: '6'
+    env: SHELLJS_VERSION=0.7.x
+  - node_js: '6'
+    env: SHELLJS_VERSION=0.6.x
+  - node_js: '6'
+    env: SHELLJS_VERSION=0.5.x
+  - node_js: '6'
+    env: SHELLJS_VERSION=0.4.x
+  # for linux/win/mac nodejs:0-4 eslint:2-6
+  # The command "npm run lint --silent" exited with 1.
+  # The command "npm run test --silent" exited with 1.
+  - node_js: '4'
+    env: SHELLJS_VERSION=0.8.x
+  - node_js: '4'
+    env: SHELLJS_VERSION=0.7.x
+  - node_js: '4'
+    env: SHELLJS_VERSION=0.6.x
+  - node_js: '4'
+    env: SHELLJS_VERSION=0.5.x
+  - node_js: '4'
+    env: SHELLJS_VERSION=0.4.x
+  - node_js: '0.12'
+    env: SHELLJS_VERSION=0.8.x
+  - node_js: '0.12'
+    env: SHELLJS_VERSION=0.7.x
+  - node_js: '0.12'
+    env: SHELLJS_VERSION=0.6.x
+  - node_js: '0.12'
+    env: SHELLJS_VERSION=0.5.x
+  - node_js: '0.12'
+    env: SHELLJS_VERSION=0.4.x
+  - node_js: '0.10'
+    env: SHELLJS_VERSION=0.8.x
+  - node_js: '0.10'
+    env: SHELLJS_VERSION=0.7.x
+  - node_js: '0.10'
+    env: SHELLJS_VERSION=0.6.x
+  - node_js: '0.10'
+    env: SHELLJS_VERSION=0.5.x
+  - node_js: '0.10'
+    env: SHELLJS_VERSION=0.4.x
