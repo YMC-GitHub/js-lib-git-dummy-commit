@@ -23,7 +23,7 @@ before_install:
 install:
   - echo "now is in install Phase"
   - npm install
-  - ./build/install-shelljs.sh
+  - chmod +x build/install-shelljs.sh && ./build/install-shelljs.sh
 before_script:
   - echo "now is in before_script Phase"
 script:
