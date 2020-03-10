@@ -1,58 +1,86 @@
 import { expect } from 'chai'
 import { describe, it, before } from 'mocha'
-import shell from 'shelljs'
+import shell from 'execa'
 
 import fn from '../../src'
 import testDirConfig from './config'
 
 describe('Create dummy commits', function() {
   this.timeout(50000)
-  before(done => {
-    shell.config.silent = true
+  before(async () => {
     // clean the test temp dir
-    shell.rm('-rf', testDirConfig.temp)
-    shell.mkdir(testDirConfig.temp)
+     shell('rm', ['-rf', testDirConfig.temp], { silent: true })
+     shell('mkdir', ['-p', testDirConfig.temp], { silent: true })
     // go into the test temp dir
-    shell.cd(testDirConfig.temp)
     // init a git repo in the test temp dir
-    shell.exec('git init')
-    done()
+     shell('git', ['init'], { silent: true, cwd: testDirConfig.temp })
   })
   beforeEach(() => {})
 
   afterEach(() => {})
-  after(() => {
-    shell.config.silent = true
+  after(async ()=> {
     // clean the test temp dir
-    shell.rm('-rf', testDirConfig.temp)
+     shell('rm', ['-rf', testDirConfig.temp], { silent: true })
   })
-
+  /*
+  //ok:
   it('default commit:passed msg with undefined', done => {
-    fn()
-    expect(shell.exec('git log').stdout).to.include('Test commit')
-    done()
+      fn().then(()=>{
+        return shell('git', ['log'], {
+          silent: true,
+          cwd: testDirConfig.temp,
+        })
+      }).then(({ stdout })=>{
+        expect(stdout).to.include('Test commit')
+        done()
+      })
   })
-  it('default commit:passed msg with empty str', done => {
-    fn('')
-    expect(shell.exec('git log').stdout).to.include('Test commit')
-    fn(' ')
-    expect(shell.exec('git log').stdout).to.include('Test commit')
-    done()
+  */
+ it('default commit:passed msg with undefined', async () => {
+   await fn();
+   let {stdout}= await shell('git', ['log'], {
+    silent: true,
+    cwd: testDirConfig.temp,
   })
-  it('default commit:passed msg with empty array', done => {
-    fn([])
-    expect(shell.exec('git log').stdout).to.include('Test commit')
-    done()
+  expect(stdout).to.include('Test commit')
+})
+  it('default commit:passed msg with empty str', async () => {
+    await fn('')
+    let {stdout}= await shell('git', ['log'], {
+      silent: true,
+      cwd: testDirConfig.temp,
+    })
+    expect(stdout).to.include('Test commit')
+    await fn(' ')
+    stdout= (await shell('git', ['log'], {
+      silent: true,
+      cwd: testDirConfig.temp,
+    })).stdout
+    expect(stdout).to.include('Test commit')
   })
-  it('custom commit:passed msg with str', done => {
-    fn('awesome')
-    expect(shell.exec('git log').stdout).to.include('awesome')
-    done()
+  it('default commit:passed msg with empty array', async () => {
+    await fn([])
+    let {stdout}= await shell('git', ['log'], {
+      silent: true,
+      cwd: testDirConfig.temp,
+    })
+    expect(stdout).to.include('Test commit')
   })
-  it('custom commit:passed msg with arr', done => {
-    fn(['build: init', 'fix:'])
-    expect(shell.exec('git log').stdout).to.include('build:')
-    expect(shell.exec('git log').stdout).to.include('fix:')
-    done()
+  it('custom commit:passed msg with str', async () => {
+    await fn('awesome')
+    let {stdout}= await shell('git', ['log'], {
+      silent: true,
+      cwd: testDirConfig.temp,
+    })
+    expect(stdout).to.include('awesome')
+  })
+  it('custom commit:passed msg with arr', async () => {
+    await fn(['build: init', 'fix:'])
+    let {stdout}= await shell('git', ['log'], {
+      silent: true,
+      cwd: testDirConfig.temp,
+    })
+    expect(stdout).to.include('build:')
+    expect(stdout).to.include('fix:')
   })
 })

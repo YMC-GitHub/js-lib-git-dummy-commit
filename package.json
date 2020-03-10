@@ -63,7 +63,7 @@
     "uglify-js": "^3.7.2"
   },
   "dependencies": {
-    "shelljs": "^0.8.3"
+    "execa": "1.x-4.x"
   },
   "files": [
     "lib",

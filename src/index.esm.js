@@ -2,7 +2,7 @@
 import index from './index'
 export default index
 */
-import shell from 'shelljs'
+import shell from 'execa'
 import * as utils from './utils'
 
 const defaultMsg = 'Test commit'
@@ -14,7 +14,7 @@ const makeDefault = str => {
   return str
 }
 
-const main = (msg, silent) => {
+const main = (msg, silent, exeOpts) => {
   let arg = ''
   // eslint-disable-next-line no-param-reassign
   msg = makeDefault(msg)
@@ -30,17 +30,18 @@ const main = (msg, silent) => {
         // eslint-disable-next-line no-param-reassign
         m = makeDefault(m)
 
-        arg += `-m"${m}" `
+        arg += `"${m}" `
       })
     } else {
-      arg = `-m"${defaultMsg}"`
+      arg = `"${defaultMsg}"`
     }
   } else {
-    arg = `-m"${msg}"`
+    arg = `"${msg}"`
   }
 
-  shell.exec(`git commit ${arg} --allow-empty --no-gpg-sign`, {
+  shell('git', ['commit', "-m",`${arg}`, '--allow-empty', '--no-gpg-sign'], {
     silent,
+    cwd: exeOpts.cwd || process.cwd(),
   })
 }
 export default main
