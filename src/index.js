@@ -10,15 +10,10 @@ const makeDefault = str => {
   return str
 }
 
-const main = (msg, silent, exeOpts={}) => {
+const main = (msg, execaOpt = {}) => {
   let arg = ''
   // eslint-disable-next-line no-param-reassign
   msg = makeDefault(msg)
-
-  if (silent === undefined) {
-    // eslint-disable-next-line no-param-reassign
-    silent = true
-  }
 
   if (Array.isArray(msg)) {
     if (msg.length) {
@@ -35,9 +30,10 @@ const main = (msg, silent, exeOpts={}) => {
     arg = `"${msg}"`
   }
 
-  return shell('git', ['commit', "-m",`${arg}`, '--allow-empty', '--no-gpg-sign','--no-verify'], {
-    silent,
-    cwd: exeOpts.cwd || process.cwd(),
-  })
+  return shell(
+    'git',
+    ['commit', '-m', `${arg}`, '--allow-empty', '--no-gpg-sign', '--no-verify'],
+    Object.assign({}, execaOpt)
+  )
 }
 export default main
